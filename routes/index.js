@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request'); // "Request" library
+var cookieParser = require('cookie-parser');
 
 var client_id = '16841a7e5a4440148404342c6f804e50'; // Your client id
 var client_secret = 'eca955deae774a06a0c0191595b2b28d'; // Your client secret
@@ -30,21 +31,13 @@ router.get('/', function(req, res, next) {
   res.render('index');
 });
 
-// 
-// /* GET home page. */
-// router.get('/setlister', function(req, res, next) {
-//   res.render('setlister', { title: 'Express' });
-// });
-
-
-
 router.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email';
+  var scope = 'user-read-private user-read-email user-follow-read';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -56,7 +49,24 @@ router.get('/login', function(req, res) {
 });
 
 
+router.get('/playLists', function(req, res){
+    console.log('trying to get cookies from these playlists: ' + req.cookies);
+    
+    var access_token = req.cookies["spotify_access_token"];
+    
+    var options = {
+        url: 'https://api.spotify.com/v1/me/following?type=artist',
+        headers: { 'Authorization': 'Bearer ' + access_token },
+        json: true
+    };
+    
+    request.get(options, function(error, response, body) {
+          res.send(body);
+        });
+});
+
 router.get('/setlister', function(req, res) {
+   console.log(req.cookies);  
 
   var code = req.query.code || null;
   var state = req.query.state || null;
@@ -68,7 +78,8 @@ router.get('/setlister', function(req, res) {
         error: 'state_mismatch'
       }));
   } else {
-    res.clearCookie(stateKey);
+      console.log('clearing cookie');
+    // res.clearCookie(stateKey);
     var authOptions = {
       url: 'https://accounts.spotify.com/api/token',
       form: {
@@ -87,6 +98,8 @@ router.get('/setlister', function(req, res) {
 
         access_token = body.access_token,
             refresh_token = body.refresh_token;
+            
+        res.cookie('spotify_access_token', access_token);
 
         var options = {
           url: 'https://api.spotify.com/v1/me',

@@ -3,6 +3,7 @@ extends layout
 block content
   h1 SETLISTER
   p Welcome to SETLISTER!!
-  a(href="/login") Log in with spotify 
+  div(ng-if="loggedIn") 
+    a(href="/login") Log in with spotify 
   div #{email}
   div aaa
