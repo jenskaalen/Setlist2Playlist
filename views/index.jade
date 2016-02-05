@@ -3,7 +3,21 @@ extends layout
 block content
   h1 SETLISTER
   p Welcome to SETLISTER!!
-  div(ng-if="loggedIn") 
-    a(href="/login") Log in with spotify 
-  div #{email}
-  div aaa
+  div(class="row")
+    a(href="/login") Log in with spotify
+    // div(ng-if="!loggedIn")  
+    // div(ng-if="loggedIn" class="") You are logged in.
+  
+  div(class="row")
+    input(class="form-control" ng-model="artistInput" placeholder="Name of the band")
+  div(class="row")
+    textarea(ng-model="enteredSongsInput" class="form-control" ng-style="{ 'height': '200px' }") Paste in the songs you want - one per line
+  
+  div(class="row")
+    div(class="btn btn-primary" ng-click="search()") Search
+  
+  div(class="row")
+    div Artist: {{ artistInput }}
+    div Entered songs: {{ enteredSongs }}
+    div Found songs:
+    div(ng-repeat="song in foundSongs") {{ song }}

@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 
 var client_id = '16841a7e5a4440148404342c6f804e50'; // Your client id
 var client_secret = 'eca955deae774a06a0c0191595b2b28d'; // Your client secret
-var redirect_uri = 'http://localhost:3000/setlister'; // Your redirect uri
+var redirect_uri = 'http://localhost:3111/setlister'; // Your redirect uri
 var stateKey = 'spotify_auth_state';
 var cookieParser = require('cookie-parser');
 var querystring = require('querystring');
