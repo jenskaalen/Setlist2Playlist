@@ -14,10 +14,12 @@ block content
     textarea(ng-model="enteredSongsInput" class="form-control" ng-style="{ 'height': '200px' }") Paste in the songs you want - one per line
   
   div(class="row")
-    div(class="btn btn-primary" ng-click="search()") Search
+    div(class="btn btn-primary" ng-click="searchSetlist()") Search
+    // div(class="btn btn-primary" ng-click="search()") Search
   
   div(class="row")
     div Artist: {{ artistInput }}
     div Entered songs: {{ enteredSongs }}
     div Found songs:
     div(ng-repeat="song in foundSongs") {{ song }}
+    div {{ artist }}

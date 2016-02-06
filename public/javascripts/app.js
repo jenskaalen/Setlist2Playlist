@@ -3,7 +3,7 @@ angular.module('setlister', ['ngCookies']);
 var app = angular.module('setlister');
  
 
-app.controller('mainController', function($scope, $cookies, $http, spotify){
+app.controller('mainController', function($scope, $cookies, $http, spotify, setlistfm){
     $scope.artistInput = "amon amarth";
     $scope.enteredSongsInput = "father of the wolf";
     $scope.foundSongs = [];
@@ -23,6 +23,20 @@ app.controller('mainController', function($scope, $cookies, $http, spotify){
    }
     
    $scope.test = "nanana" ;
+   
+   $scope.searchSetlist = function(){
+       setlistfm.bandSetLists($scope.artistInput)
+       .success(function(data){
+            console.log('nana')
+            $scope.enteredSongsInput = data;
+            $scope.artist = data;
+            console.log(data);
+       }).error(function(){
+           console.log('something went wrong');
+       }).then(function(){
+           console.log('f u');
+       });
+   }
    
    $scope.search = function(){
         if (!$scope.enteredSongsInput){
@@ -66,16 +80,8 @@ app.factory('spotify', function($cookies, $http){
 app.factory('setlistfm', function($cookies, $http){
     return {
             bandSetLists: function(bandName){
-            bandName = encodeURIComponent(bandName);
-            
-            var bandUriTemplate = "http://api.setlist.fm/rest/0.1/search/artists.json?artistName=[band]"
-            var bandQuery = bandUriTemplate.replace("[band]", bandName);
-            // 
-            // var searchUri = "https://api.spotify.com/v1/search?q=[query]&type=track&limit:1";
-            // searchUri = searchUri.replace("[query]", searchText);
-            // var access_token = $cookies.get("spotify_access_token");
-            // var req = { headers:  { 'Authorization': 'Bearer ' + access_token } };
-            // return $http.get(searchUri, req);
+                bandName = encodeURIComponent(bandName);
+                return $http.get('/setlistfm?artist=' + bandName);
         }
     };
 })

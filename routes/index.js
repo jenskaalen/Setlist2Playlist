@@ -26,8 +26,6 @@ var generateRandomString = function(length) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log(req.body);
-    console.log(res.body);
   res.render('index');
 });
 
@@ -66,8 +64,6 @@ router.get('/playLists', function(req, res){
 });
 
 router.get('/setlister', function(req, res) {
-   console.log(req.cookies);  
-
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -129,5 +125,17 @@ router.get('/setlister', function(req, res) {
   
   
 });
+
+router.get('/setlistfm', function(req, res){
+    var bandName = req.query.artist;
+    // bandName = encodeURIComponent(bandName);
+    
+    var bandUriTemplate = "http://api.setlist.fm/rest/0.1/search/artists.json?artistName=[band]"
+    var bandQuery = bandUriTemplate.replace("[band]", bandName);
+    
+    request(bandQuery, function(error, response, body){
+        res.json(body);
+    });
+})
 
 module.exports = router;
