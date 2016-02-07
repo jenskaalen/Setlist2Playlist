@@ -7,19 +7,21 @@ block content
     a(href="/login") Log in with spotify
     // div(ng-if="!loggedIn")  
     // div(ng-if="loggedIn" class="") You are logged in.
+   
+  div Select a playlist
+  select(class="form-control" ng-model="selectedList" ng-options="playlist as playlist.name for playlist in playlists")
   
   div(class="row")
     input(class="form-control" ng-model="artistInput" placeholder="Name of the band")
+   
   div(class="row")
-    textarea(ng-model="enteredSongsInput" class="form-control" ng-style="{ 'height': '200px' }") Paste in the songs you want - one per line
+    div(class="btn btn-primary" ng-click="searchArtist()") Search
+ 
+  div(class="row")
+    // div {{ artistId }}
+    div(ng-repeat="song in songs") {{ song['@name'] }} --  {{ song.spotifyData.name }}
   
   div(class="row")
-    div(class="btn btn-primary" ng-click="searchSetlist()") Search
-    // div(class="btn btn-primary" ng-click="search()") Search
-  
-  div(class="row")
-    div Artist: {{ artistInput }}
-    div Entered songs: {{ enteredSongs }}
-    div Found songs:
-    div(ng-repeat="song in foundSongs") {{ song }}
-    div {{ artist }}
+    div(class="btn btn-primary" ng-disabled="!selectedList" ng-click="addSongsToList()") Add songs to playlist: {{ selectedList.name }}
+ 
+  div {{ profile }}

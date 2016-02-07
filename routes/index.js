@@ -122,11 +122,9 @@ router.get('/setlister', function(req, res) {
       }
     });
   }
-  
-  
 });
 
-router.get('/setlistfm', function(req, res){
+router.get('/getArtist', function(req, res){
     var bandName = req.query.artist;
     // bandName = encodeURIComponent(bandName);
     
@@ -137,5 +135,32 @@ router.get('/setlistfm', function(req, res){
         res.json(body);
     });
 })
+
+
+router.get('/getSetlist', function(req, res){
+
+    var template = "http://api.setlist.fm/rest/0.1/artist/[id]/setlists.json";
+    var requestUrl = template.replace("[id]", req.query.id);
+
+    request(requestUrl, function(error, response, body){
+        res.send(body);
+    });
+})
+
+router.get('/getSpotifySong', function(req, res){
+    console.log('trying to get cookies from these playlists: ' + req.cookies);
+    
+    var access_token = req.cookies["spotify_access_token"];
+    
+    var options = {
+        url: 'https://api.spotify.com/v1/me/following?type=artist',
+        headers: { 'Authorization': 'Bearer ' + access_token },
+        json: true
+    };
+    
+    request.get(options, function(error, response, body) {
+          res.send(body);
+        });
+});
 
 module.exports = router;
