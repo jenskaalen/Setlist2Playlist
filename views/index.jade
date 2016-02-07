@@ -1,13 +1,12 @@
 extends layout
 
 block content
-  h1 SETLISTER
+  a(href='/')
+    h1 SETLISTER
   p Welcome to SETLISTER!!
   div(class="row")
     a(href="/login") Log in with spotify
-    // div(ng-if="!loggedIn")  
-    // div(ng-if="loggedIn" class="") You are logged in.
-   
+ 
   div Select a playlist
   select(class="form-control" ng-model="selectedList" ng-options="playlist as playlist.name for playlist in playlists")
   
@@ -19,9 +18,8 @@ block content
  
   div(class="row")
     // div {{ artistId }}
-    div(ng-repeat="song in songs") {{ song['@name'] }} --  {{ song.spotifyData.name }}
+    div(ng-repeat="song in songs") {{ song['@name'] }} --  {{ song.spotifyData ? "Found song" : "Didnt find song" }}
   
   div(class="row")
-    div(class="btn btn-primary" ng-disabled="!selectedList" ng-click="addSongsToList()") Add songs to playlist: {{ selectedList.name }}
- 
-  div {{ profile }}
+    div(class="btn btn-primary" ng-disabled="!selectedList || !songs" ng-click="addSongsToList()") Add songs to playlist: {{ selectedList.name }}
+    

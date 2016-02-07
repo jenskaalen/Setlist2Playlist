@@ -4,8 +4,7 @@ var app = angular.module('setlister');
  
 
 app.controller('mainController', function($scope, $cookies, $http, spotify, setlistfm){
-    $scope.artistInput = "amon amarth";
-    $scope.enteredSongsInput = "father of the wolf";
+    $scope.artistInput = "billy talent";
     $scope.foundSongs = [];
    
     spotify.getPlaylists().success(function(playlists){
@@ -57,7 +56,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
    
    $scope.addSongsToList = function(){
        $scope.songs.forEach(function(song) {
-           spotify.addSongToList(song.uri, $scope.selectedList.id, $scope.profile.id);
+           spotify.addSongToList(song.spotifyData.uri, $scope.selectedList.id, $scope.profile.id);
        }, this);
    }
    
@@ -129,11 +128,16 @@ app.factory('spotify', function($cookies, $http){
             return $http.get(requestUrl, req);
         },
         addSongToList(songUri, playlist, user){
-            var postUri = "https://api.spotify.com/v1/users/[user]/playlists/[playlist]/tracks";
+            var postUri = "https://api.spotify.com/v1/users/[user]/playlists/[playlist]/tracks?uris="+songUri;
             postUri = postUri.replace("[playlist]", playlist);
             postUri = postUri.replace("[user]", user);
+            console.log(songUri);
             
-            return $http.post(postUri, { uris: [ songUri ] }, req);
+            return $http( {
+               method: "POST",
+               url: postUri, 
+               headers:  { 'Authorization': 'Bearer ' + access_token } 
+            });
         },
         getProfile: function(){
             return $http.get("https://api.spotify.com/v1/me", req);
