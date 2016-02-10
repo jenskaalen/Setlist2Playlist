@@ -5,10 +5,11 @@ var cookieParser = require('cookie-parser');
 
 var client_id = '16841a7e5a4440148404342c6f804e50'; // Your client id
 var client_secret = 'eca955deae774a06a0c0191595b2b28d'; // Your client secret
-var redirect_uri = 'http://localhost:3111/setlister'; // Your redirect uri
+var redirect_uri = 'http://setlister.codicide.net/setlister'; // Your redirect uri
 var stateKey = 'spotify_auth_state';
 var cookieParser = require('cookie-parser');
 var querystring = require('querystring');
+var xml2js = require('xml2js');
 
 //we store dis
 var access_token;
@@ -124,28 +125,28 @@ router.get('/setlister', function(req, res) {
   }
 });
 
-router.get('/getArtist', function(req, res){
+router.get('/getArtist', function(req, res) {
     var bandName = req.query.artist;
     // bandName = encodeURIComponent(bandName);
-    
+
     var bandUriTemplate = "http://api.setlist.fm/rest/0.1/search/artists.json?artistName=[band]"
     var bandQuery = bandUriTemplate.replace("[band]", bandName);
-    
-    request(bandQuery, function(error, response, body){
+
+    request(bandQuery, function(error, response, body) {
         res.json(body);
     });
-})
+});
 
 
-router.get('/getSetlist', function(req, res){
+router.get('/getSetlist', function(req, res) {
 
     var template = "http://api.setlist.fm/rest/0.1/artist/[id]/setlists.json";
     var requestUrl = template.replace("[id]", req.query.id);
 
-    request(requestUrl, function(error, response, body){
+    request(requestUrl, function(error, response, body) {
         res.send(body);
     });
-})
+});
 
 router.get('/getSpotifySong', function(req, res){
     console.log('trying to get cookies from these playlists: ' + req.cookies);
@@ -163,4 +164,34 @@ router.get('/getSpotifySong', function(req, res){
         });
 });
 
+router.get('/searchSetlistfmArtist', function (req, res) {
+    var bandName = req.query.artist;
+    // bandName = encodeURIComponent(bandName);
+
+    var bandUriTemplate = "http://api.setlist.fm/rest/0.1/search/artists.xml?artistName=[band]";
+    var bandQuery = bandUriTemplate.replace("[band]", bandName);
+    
+    request(bandQuery, function (error, response, body) {
+        console.log(body);
+
+        xml2js.parseString(body, function (err, result) {
+            console.log(result);
+            var artists = [];
+
+            for (var i = 0; i < result.artists.artist.length; i++) {
+                var entry = result.artists.artist[i];
+
+                artists.push(new {
+                    name: entry.$.name,
+                    setlistfmId: entry.$.mbid
+            });
+            }
+
+            res.send(artists);
+        });
+    });
+});
+
 module.exports = router;
+
+
