@@ -180,11 +180,11 @@ router.get('/searchSetlistfmArtist', function (req, res) {
 
             for (var i = 0; i < result.artists.artist.length; i++) {
                 var entry = result.artists.artist[i];
-
-                artists.push(new {
-                    name: entry.$.name,
-                    setlistfmId: entry.$.mbid
-            });
+                var createdArtist =  {
+                                    name: entry.$.name,
+                                    setlistfmId: entry.$.mbid
+                            };
+                artists.push(createdArtist);
             }
 
             res.send(artists);

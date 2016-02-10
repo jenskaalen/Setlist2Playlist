@@ -8,7 +8,7 @@ block content
       a(href="/login" ng-show="!playlists")
         img(src="/images/log_in-mobile.svg")
  
-  div(ng-show="playlists")
+  div //(ng-show="playlists")
       div(class="row top17")
         div(class="col-xs-12")
           select(class="form-control" ng-model="selectedList" ng-options="playlist as playlist.name for playlist in playlists")
@@ -20,8 +20,13 @@ block content
         div(class="col-xs-2")
           div(class="btn btn-primary" ng-click="searchArtist()") Search
 
-      div {{ artist.name }}
-
+      div(class="row" ng-show="artists") 
+        span
+          span(ng-disabled="artists.length < 2 || artistIndex == 0" ng-click="artistIndex = artistIndex - 1;" class="btn glyphicon glyphicon-chevron-left")
+          span   Artist: {{ artist.name }}  
+          span(ng-disabled="artistIndex == artists.length - 1" ng-click="artistIndex = artistIndex + 1;" class="btn glyphicon glyphicon-chevron-right")
+          span
+            button(ng-click="searchSetlist()" ng-disabled="artist == null" class="btn btn-primary") Find songs on spotify
       div(class="row top15")
         div(ng-show="songs.length > 0") Showing songs found from last registered setlist of {{ artist['@name'] }}
 

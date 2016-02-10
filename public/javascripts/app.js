@@ -4,9 +4,10 @@ var app = angular.module('setlister');
  
 
 app.controller('mainController', function($scope, $cookies, $http, spotify, setlistfm){
-    $scope.artistInput = "billy talent";
+    $scope.artistInput = "heaven shall burn";
     $scope.foundSongs = [];
     $scope.readyToAddSongs = true;
+    $scope.artistIndex = 0;
    
     spotify.getPlaylists().success(function(playlists){
        $scope.playlists = playlists.items; 
@@ -19,6 +20,11 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
 
     $scope.$watchGroup(['playlist', 'songs'], function () {
         //TODO: get playlist songs
+    });
+    
+    $scope.$watch('artistIndex', function(){
+        if ($scope.artists)
+            $scope.artist = $scope.artists[$scope.artistIndex]; 
     });
     
    function addSongToSpotifyList(song){
@@ -74,7 +80,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
    $scope.test = "nanana" ;
    
    $scope.searchSetlist = function(){
-       setlistfm.bandSetLists($scope.artistInput)
+       setlistfm.bandSetLists($scope.artist.name)
        .then(function(data){
             $scope.enteredSongsInput = data;
             $scope.artist = JSON.parse(data);
