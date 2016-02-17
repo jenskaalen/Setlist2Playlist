@@ -8,7 +8,7 @@ block content
       a(href="/login" ng-show="!playlists")
         img(src="/images/log_in-mobile.svg")
  
-  div //(ng-show="playlists")
+  div(ng-show="playlists")
       div(class="row top17")
         div(class="col-xs-12")
           select(class="form-control" ng-model="selectedList" ng-options="playlist as playlist.name for playlist in playlists")
@@ -16,17 +16,26 @@ block content
   
       form(class="row top5" ng-submit="searchArtist()" )
         div(class="col-xs-8")
-          input(class="form-control" ng-model="artistInput" placeholder="Name of the band")
+          input(class="form-control" ng-init="focus()" ng-model="artistInput" placeholder="Name of the band")
         div(class="col-xs-2")
           div(class="btn btn-primary" ng-click="searchArtist()") Search
 
-      div(class="row" ng-show="artists") 
+      div(class="row top17" ng-show="artists") 
         span
           span(ng-disabled="artists.length < 2 || artistIndex == 0" ng-click="artistIndex = artistIndex - 1;" class="btn glyphicon glyphicon-chevron-left")
-          span   Artist: {{ artist.name }}  
+          span(class="h3")  {{ artist.name }}
           span(ng-disabled="artistIndex == artists.length - 1" ng-click="artistIndex = artistIndex + 1;" class="btn glyphicon glyphicon-chevron-right")
           span
             button(ng-click="searchSetlist()" ng-disabled="artist == null" class="btn btn-primary") Find songs on spotify
+
+      div(class="row top17" ng-show="setlists") 
+        span
+          span(ng-disabled="setlists.length < 2 || setlistIndex == 0" ng-click="setlistIndex = setlistIndex - 1;" class="btn glyphicon glyphicon-chevron-left")
+          span(class="h3")  {{ setlists[setlistIndex].where }}
+          span(ng-disabled="setlistIndex == setlists.length - 1" ng-click="setlistIndex = setlistIndex + 1;" class="btn glyphicon glyphicon-chevron-right")
+          span
+            button(ng-click="searchSetlist()" ng-disabled="setlist == null" class="btn btn-primary") Find songs on spotify
+
       div(class="row top15")
         div(ng-show="songs.length > 0") Showing songs found from last registered setlist of {{ artist['@name'] }}
 
@@ -37,9 +46,9 @@ block content
               th Setlist.fm name
               th Spotify name
           tbody
-            tr(ng-repeat="song in songs" ng-class="{ 'text-warning': !song.spotifyData , 'text-success': song.addedToList }") 
-              td(ng-class="{ 'strikethrough': !song.spotifyData }") {{ song.addedToList ? "?" : "" }} {{ song['@name'] }}
-              td(){{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name }}
+            tr(ng-repeat="song in setlists[setlistIndex].songs" ng-class="{ 'text-warning': !song.spotifyData , 'text-success': song.addedToList }") 
+              td(ng-class="{ 'strikethrough': !song.spotifyData }") {{ song.name }}
+              td {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name }}
   
       div(class="row top5")
         div(class="col-xs-12")

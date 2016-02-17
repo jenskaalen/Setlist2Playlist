@@ -7,7 +7,25 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     $scope.artistInput = "heaven shall burn";
     $scope.foundSongs = [];
     $scope.readyToAddSongs = true;
-    $scope.artistIndex = 0;
+    
+    function findSongOnSpotify(song) {
+        var indexOfSong = $scope.setlist.songs.indexOf(song);
+        
+        spotify.searchTrack($scope.artist.name + " " + song.name)
+       .then(function (spotifySong) {
+            song.spotifyData = spotifySong;
+            
+            if (indexOfSong === ($scope.songs.length - 1))
+                return;
+            
+            findSongOnSpotify($scope.setlist.songs[indexOfSong + 1]);
+        });
+    }
+    
+    function findSongsOnSpotify() {
+        var song = $scope.setlist.songs[0];
+        findSongOnSpotify(song);
+    }
    
     spotify.getPlaylists().success(function(playlists){
        $scope.playlists = playlists.items; 
@@ -25,6 +43,14 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     $scope.$watch('artistIndex', function(){
         if ($scope.artists)
             $scope.artist = $scope.artists[$scope.artistIndex]; 
+    });
+    
+    $scope.$watch('setlistIndex', function () {
+        if ($scope.setlists) {
+            $scope.setlist = $scope.setlists[$scope.setlistIndex];
+            $scope.songs = $scope.setlist.songs;
+            findSongsOnSpotify();
+        }
     });
     
    function addSongToSpotifyList(song){
@@ -50,25 +76,6 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
         var song = $scope.songs[0];
         addSongToSpotifyList(song);
     }
-   
-    function findSongOnSpotify(song) {
-        var indexOfSong = $scope.songs.indexOf(song);
-
-       spotify.searchTrack($scope.artistInput + " " + song['@name'])
-       .success(function(data){
-           song.spotifyData = data.tracks.items[0];
-            
-            if (indexOfSong === ($scope.songs.length - 1))
-                return;
-            
-            findSongOnSpotify($scope.songs[indexOfSong + 1]);
-        });
-    }
-    
-    function findSongsOnSpotify() {
-        var song = $scope.songs[0];
-        findSongOnSpotify(song);
-    }
     
    $scope.loggedIn = $cookies.get("spotify_access_token") != null;
    $scope.enteredSongs = [];
@@ -77,20 +84,18 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
        $scope.authKey = $cookies.get("spotify_access_token");
    }
     
-   $scope.test = "nanana" ;
-   
    $scope.searchSetlist = function(){
-       setlistfm.bandSetLists($scope.artist.name)
-       .then(function(data){
-            $scope.enteredSongsInput = data;
-            $scope.artist = JSON.parse(data);
+       setlistfm.getSetlist($scope.artist.setlistfmId,0)
+        .success(function (setlists) {
+            $scope.setlists = setlists;
+            $scope.setlistIndex = 0;
+            
        });
     }
 
-
-   
    $scope.searchArtist = function(){
     setlistfm.getArtists($scope.artistInput).success(function (artists) {
+        $scope.artistIndex = 0;
         $scope.artists = artists;
         $scope.artist = artists[0];
         $scope.artistId = $scope.artist.setlistfmId;
@@ -100,18 +105,12 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     
     function getSetLists() {
         setlistfm.getSetlist($scope.artistId, 0)
-        .success(function (songs) {
-            
-            //doing this madness because poor api being stupid
-            if (songs.setlists.setlist.constructor === Array)
-                songs.setlists.setlist = songs.setlists.setlist[0];
-            if (songs.setlists.setlist.sets.set.constructor === Array)
-                songs.setlists.setlist.sets.set = songs.setlists.setlist.sets.set[0];
-            
-            $scope.songs = songs.setlists.setlist.sets.set.song;
-            
-            findSongsOnSpotify();
-        }); 
+        .success(function (setlists) {
+            $scope.setlistIndex = 0;
+            $scope.setlists = setlists;
+
+                //findSongsOnSpotify();
+            }); 
     }
    
    $scope.search = function(){
@@ -134,7 +133,6 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
    }
 });
 
-
 app.factory('spotify', function($cookies, $http) {
     var access_token = $cookies.get("spotify_access_token");
     var req = { headers: { 'Authorization': 'Bearer ' + access_token } };
@@ -145,7 +143,19 @@ app.factory('spotify', function($cookies, $http) {
 
             var searchUri = "https://api.spotify.com/v1/search?q=[query]&type=track&limit:1";
             searchUri = searchUri.replace("[query]", searchText);
-            return $http.get(searchUri, req);
+            $http.get(searchUri, req).then(function (data) {
+
+                return data.tracks.items[0];
+            });
+        },
+        findTrack: function (searchText) {
+            searchText = encodeURIComponent(searchText);
+            
+            var searchUri = "https://api.spotify.com/v1/search?q=[query]&type=track&limit:1";
+            searchUri = searchUri.replace("[query]", searchText);
+            $http.get(searchUri, req).then(function (data) {
+                
+            });
         },
         getPlaylists: function() {
             var requestUrl = "https://api.spotify.com/v1/me/playlists"

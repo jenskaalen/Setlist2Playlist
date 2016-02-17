@@ -76,7 +76,8 @@ router.get('/setlister', function(req, res) {
       }));
   } else {
       console.log('clearing cookie');
-    // res.clearCookie(stateKey);
+        res.clearCookie(stateKey);
+
     var authOptions = {
       url: 'https://accounts.spotify.com/api/token',
       form: {
@@ -110,11 +111,7 @@ router.get('/setlister', function(req, res) {
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/#' +
-          querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token
-          }));
+        res.redirect('/');
       } else {
         res.redirect('/#' +
           querystring.stringify({
@@ -129,7 +126,7 @@ router.get('/getArtist', function(req, res) {
     var bandName = req.query.artist;
     // bandName = encodeURIComponent(bandName);
 
-    var bandUriTemplate = "http://api.setlist.fm/rest/0.1/search/artists.json?artistName=[band]"
+    var bandUriTemplate = "http://api.setlist.fm/rest/0.1/search/artists.json?artistName=[band]";
     var bandQuery = bandUriTemplate.replace("[band]", bandName);
 
     request(bandQuery, function(error, response, body) {
@@ -139,12 +136,54 @@ router.get('/getArtist', function(req, res) {
 
 
 router.get('/getSetlist', function(req, res) {
-
-    var template = "http://api.setlist.fm/rest/0.1/artist/[id]/setlists.json";
+    console.log('hit /getSetlist');
+    var template = "http://api.setlist.fm/rest/0.1/artist/[id]/setlists.xml";
     var requestUrl = template.replace("[id]", req.query.id);
 
-    request(requestUrl, function(error, response, body) {
-        res.send(body);
+    request(requestUrl, function (error, response, body) {
+        
+        xml2js.parseString(body, function (err, result) {
+            console.log(result);
+            var setlists = [];
+            
+            if (!result.setlists || !result.setlists.setlist) {
+                res.send(setlists);
+                return;
+            }
+
+            for (var i = 0; i < result.setlists.setlist.length; i++) {
+                var xmlSetlist = result.setlists.setlist[i];
+                console.log(xmlSetlist);
+                var setlist = {};
+
+                if (xmlSetlist.venue != null)
+                    setlist.where = xmlSetlist.venue[0].$.name;
+                setlist.songs = [];
+                
+                if (!xmlSetlist.sets || !xmlSetlist.sets[0].set)
+                    continue;
+
+                for (var j = 0; j < xmlSetlist.sets[0].set.length; j++) {
+
+                    var xmlSet = xmlSetlist.sets[0].set[j];
+
+                    for (var k = 0; k < xmlSet.song.length; k++) {
+                        var song = xmlSet.song[k];
+                        
+                        var setlistSong = {};
+                        
+                        if (song.$.name) {
+                            setlistSong.name = song.$.name;
+                            setlist.songs.push(setlistSong);
+                        }
+                    }
+                }
+
+                setlists.push(setlist);
+            }
+
+            res.send(setlists);
+        });
     });
 });
 
@@ -159,9 +198,14 @@ router.get('/getSpotifySong', function(req, res){
         json: true
     };
     
-    request.get(options, function(error, response, body) {
-          res.send(body);
-        });
+    request.get(options, function (error, response, body) {
+        //TODO: need to parse xml this
+        res.send(body);
+
+        //xml2js.parseString(body, function(err, result) {
+
+        //};
+    });
 });
 
 router.get('/searchSetlistfmArtist', function (req, res) {
@@ -172,10 +216,7 @@ router.get('/searchSetlistfmArtist', function (req, res) {
     var bandQuery = bandUriTemplate.replace("[band]", bandName);
     
     request(bandQuery, function (error, response, body) {
-        console.log(body);
-
         xml2js.parseString(body, function (err, result) {
-            console.log(result);
             var artists = [];
 
             for (var i = 0; i < result.artists.artist.length; i++) {
