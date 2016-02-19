@@ -33,8 +33,6 @@ block content
           span(ng-disabled="setlists.length < 2 || setlistIndex == 0" ng-click="setlistIndex = setlistIndex - 1;" class="btn glyphicon glyphicon-chevron-left")
           span(class="h3")  {{ setlists[setlistIndex].where }}
           span(ng-disabled="setlistIndex == setlists.length - 1" ng-click="setlistIndex = setlistIndex + 1;" class="btn glyphicon glyphicon-chevron-right")
-          span
-            button(ng-click="searchSetlist()" ng-disabled="setlist == null" class="btn btn-primary") Find songs on spotify
 
       div(class="row top15")
         div(ng-show="songs.length > 0") Showing songs found from last registered setlist of {{ artist['@name'] }}

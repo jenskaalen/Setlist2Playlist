@@ -1,0 +1,2 @@
+F:\Prosjekter\Setlister\obj\Debug\Setlister.njsprojResolveAssemblyReference.cache
+F:\Prosjekter\Setlister\bin\Microsoft.NodejsTools.WebRole.dll

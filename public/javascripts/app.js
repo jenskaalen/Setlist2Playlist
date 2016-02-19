@@ -11,8 +11,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     function findSongOnSpotify(song) {
         var indexOfSong = $scope.setlist.songs.indexOf(song);
         
-        spotify.searchTrack($scope.artist.name + " " + song.name)
-       .then(function (spotifySong) {
+        spotify.searchTrack($scope.artist.name + " " + song.name).then(function (spotifySong) {
             song.spotifyData = spotifySong;
             
             if (indexOfSong === ($scope.songs.length - 1))
@@ -143,10 +142,11 @@ app.factory('spotify', function($cookies, $http) {
 
             var searchUri = "https://api.spotify.com/v1/search?q=[query]&type=track&limit:1";
             searchUri = searchUri.replace("[query]", searchText);
-            $http.get(searchUri, req).then(function (data) {
-
-                return data.tracks.items[0];
+            var promise = $http.get(searchUri, req).then(function (result) {
+                return result.data.tracks.items[0];
             });
+
+            return promise;
         },
         findTrack: function (searchText) {
             searchText = encodeURIComponent(searchText);
@@ -158,7 +158,7 @@ app.factory('spotify', function($cookies, $http) {
             });
         },
         getPlaylists: function() {
-            var requestUrl = "https://api.spotify.com/v1/me/playlists"
+            var requestUrl = "https://api.spotify.com/v1/me/playlists";
 
             return $http.get(requestUrl, req);
         },
