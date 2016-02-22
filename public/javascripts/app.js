@@ -42,6 +42,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     $scope.$watch('artistIndex', function(){
         if ($scope.artists)
             $scope.artist = $scope.artists[$scope.artistIndex]; 
+            $scope.searchSetlist();
     });
     
     $scope.$watch('setlistIndex', function () {
@@ -87,8 +88,10 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
        setlistfm.getSetlist($scope.artist.setlistfmId,0)
         .success(function (setlists) {
             $scope.setlists = setlists;
-            $scope.setlistIndex = 0;
-            
+            if ($scope.setlistIndex == 0)
+                findSongsOnSpotify();
+            else
+                $scope.setlistIndex = 0;
        });
     }
 

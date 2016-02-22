@@ -32,3 +32,12 @@ a {
 .bot-border {
     border-bottom: 1px solid black;
 }
+
+
+h3, span {display:block;float:left;text-align:center;}
+h3 {width:80%;margin-top:10px;}
+span {width:10%;margin-top:15px;}
+
+.btn-styleless { 
+  cursor: pointer;
+}

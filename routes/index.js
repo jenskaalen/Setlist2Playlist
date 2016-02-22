@@ -149,7 +149,7 @@ router.get('/getSetlist', function(req, res) {
             console.log(result);
             var setlists = [];
             
-            if (!result.setlists || !result.setlists.setlist) {
+            if (!result || !result.setlists || !result.setlists.setlist) {
                 res.send(setlists);
                 return;
             }

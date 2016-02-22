@@ -2,40 +2,39 @@ extends layout
 
 block content
   a(href='/')
-    h1 Setlister
+    h1(class="text-center") Setlister
   div(class="row top17")
     div(class="col-xs-8 col-sm-4")
-      a(href="/login" ng-show="!playlists")
+      a(class="text-center" href="/login" ng-show="!playlists")
         img(src="/images/log_in-mobile.svg")
  
   div(ng-show="playlists")
       div(class="row top17")
-        div(class="col-xs-12")
+        div(class="col-xs-4 col-xs-offset-4")
           select(class="form-control" ng-model="selectedList" ng-options="playlist as playlist.name for playlist in playlists")
-            option(value="") Choose a playlist
+            option(value="") Choose a Spotify playlist
   
-      form(class="row top5" ng-submit="searchArtist()" )
-        div(class="col-xs-8")
-          input(class="form-control" ng-init="focus()" ng-model="artistInput" placeholder="Name of the band")
-        div(class="col-xs-2")
-          div(class="btn btn-primary" ng-click="searchArtist()") Search
-
+      form(class="row top15 text-center" ng-submit="searchArtist()" )
+        div(class="col-xs-4 col-xs-offset-4")
+          input(class="form-control text-center" ng-blur="searchArtist()" ng-init="focus()" ng-model="artistInput" placeholder="Name of the band")
+     
       div(class="row top17" ng-show="artists") 
-        span
+        div(class="col-xs-6 col-xs-offset-3")
           span(ng-disabled="artists.length < 2 || artistIndex == 0" ng-click="artistIndex = artistIndex - 1;" class="btn glyphicon glyphicon-chevron-left")
-          span(class="h3")  {{ artist.name }}
+          h3 {{ artist.name }}
           span(ng-disabled="artistIndex == artists.length - 1" ng-click="artistIndex = artistIndex + 1;" class="btn glyphicon glyphicon-chevron-right")
-          span
-            button(ng-click="searchSetlist()" ng-disabled="artist == null" class="btn btn-primary") Find songs on spotify
+          
+      div(class="row top15 text-center" ng-show="false")
+        button(ng-click="searchSetlist()" ng-disabled="artist == null" class="btn btn-primary") Find setlists
 
       div(class="row top17" ng-show="setlists") 
-        span
+        div(class="col-xs-6 col-xs-offset-3")
           span(ng-disabled="setlists.length < 2 || setlistIndex == 0" ng-click="setlistIndex = setlistIndex - 1;" class="btn glyphicon glyphicon-chevron-left")
-          span(class="h3")  {{ setlists[setlistIndex].where }}
+          h3  {{ setlists[setlistIndex].where }}
           span(ng-disabled="setlistIndex == setlists.length - 1" ng-click="setlistIndex = setlistIndex + 1;" class="btn glyphicon glyphicon-chevron-right")
-
-      div(class="row top15")
-        div(ng-show="songs.length > 0") Showing songs found from last registered setlist of {{ artist['@name'] }}
+    
+      div(class="row top15 text-center")
+        div(class="btn btn-primary" ng-disabled="!selectedList || !songs || !readyToAddSongs" ng-click="addSongsToList()") Add songs to playlist: {{ selectedList.name }}
 
       div(class="row top15 bot15 top-border bot-border")
         table(class="table")
