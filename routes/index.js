@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 
 var client_id = '16841a7e5a4440148404342c6f804e50'; // Your client id
 var client_secret = 'eca955deae774a06a0c0191595b2b28d'; // Your client secret
-var redirect_uri = 'http://setlister.codicide.net/setlister'; // Your redirect uri
+var redirectTemplate = 'http://[host]/setlister'; // Your redirect uri
 var stateKey = 'spotify_auth_state';
 var cookieParser = require('cookie-parser');
 var querystring = require('querystring');
@@ -35,6 +35,8 @@ router.get('/login', function(req, res) {
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
+    var redirectUri = redirectTemplate.replace("[host]", req.get('host'));
+
   // your application requests authorization
   var scope = 'user-read-private user-read-email user-follow-read playlist-modify playlist-modify-public playlist-modify-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
@@ -42,7 +44,7 @@ router.get('/login', function(req, res) {
       response_type: 'code',
       client_id: client_id,
       scope: scope,
-      redirect_uri: redirect_uri,
+      redirect_uri: redirectUri,
       state: state
     }));
 });
@@ -68,6 +70,7 @@ router.get('/setlister', function(req, res) {
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
+  var redirectUri = redirectTemplate.replace("[host]", req.get('host'));
 
   if (state === null || state !== storedState) {
     res.redirect('/#' +
@@ -82,7 +85,7 @@ router.get('/setlister', function(req, res) {
       url: 'https://accounts.spotify.com/api/token',
       form: {
         code: code,
-        redirect_uri: redirect_uri,
+        redirect_uri: redirectUri,
         grant_type: 'authorization_code'
       },
       headers: {
