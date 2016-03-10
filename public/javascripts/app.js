@@ -6,7 +6,10 @@ var app = angular.module('setlister');
 app.controller('mainController', function($scope, $cookies, $http, spotify, setlistfm){
     $scope.artistInput = "heaven shall burn";
     $scope.foundSongs = [];
+    $scope.artists = [];
+    $scope.setlists = [];
     $scope.readyToAddSongs = true;
+    $scope.artist = null;
     
     function findSongOnSpotify(song) {
         var indexOfSong = $scope.setlist.songs.indexOf(song);
@@ -31,8 +34,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     });
     
     spotify.getProfile().success(function(profile){
-       $scope.profile = profile; 
-       console.log('fafa');
+       $scope.profile = profile;
     });
 
     $scope.$watchGroup(['playlist', 'songs'], function () {
@@ -40,16 +42,19 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     });
     
     $scope.$watch('artistIndex', function(){
-        if ($scope.artists)
+        if ($scope.artists && $scope.artists.length > 0) {
             $scope.artist = $scope.artists[$scope.artistIndex]; 
             $scope.searchSetlist();
+        }
     });
     
     $scope.$watch('setlistIndex', function () {
-        if ($scope.setlists) {
+        if ($scope.setlists && $scope.setlists.length > 0) {
             $scope.setlist = $scope.setlists[$scope.setlistIndex];
             $scope.songs = $scope.setlist.songs;
-            findSongsOnSpotify();
+            
+            if ($scope.setlist.songs.length > 0)
+                findSongsOnSpotify();
         }
     });
     
@@ -103,16 +108,6 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
         $scope.artistId = $scope.artist.setlistfmId;
             
     });  
-    }
-    
-    function getSetLists() {
-        setlistfm.getSetlist($scope.artistId, 0)
-        .success(function (setlists) {
-            $scope.setlistIndex = 0;
-            $scope.setlists = setlists;
-
-                //findSongsOnSpotify();
-            }); 
     }
    
    $scope.search = function(){

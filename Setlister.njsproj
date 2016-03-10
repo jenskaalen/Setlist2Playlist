@@ -14,12 +14,14 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <NodejsPort>3940</NodejsPort>
     <StartWebBrowser>True</StartWebBrowser>
+    <NameOfLastUsedPublishProfile>Release</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include="package.json" />
     <Content Include="public\images\log_in-mobile.svg" />
+    <None Include="Release.pubxml" />
     <Content Include="tsconfig.json" />
     <Content Include="README.md" />
     <Compile Include="app.js" />
