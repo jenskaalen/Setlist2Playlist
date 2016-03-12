@@ -10,6 +10,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     $scope.setlists = [];
     $scope.readyToAddSongs = true;
     $scope.artist = null;
+    $scope.setlistIndex = 0;
     
     function findSongOnSpotify(song) {
         var indexOfSong = $scope.setlist.songs.indexOf(song);
@@ -49,22 +50,9 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
         if ($scope.artists && $scope.artists.length > 0) {
             console.log('searching setlist');
             $scope.artist = $scope.artists[$scope.artistIndex]; 
-            $scope.searchSetlist();
+            $scope.loadArtistSetlists();
         }
     });
-    
-    $scope.$watch('setlistIndex', function () {
-        if ($scope.setlists && $scope.setlists.length > 0) {
-            $scope.setlist = $scope.setlists[$scope.setlistIndex];
-            $scope.songs = $scope.setlist.songs;
-            
-            if ($scope.setlist.songs.length > 0){
-                console.log('calling findsongs from setlistIndex');
-                findSongsOnSpotify();
-            }
-        }
-    });
-    
     
    function addSongToSpotifyList(song){
         var indexOfSong = $scope.songs.indexOf(song);
@@ -96,19 +84,34 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
    if ($scope.loggedIn){
        $scope.authKey = $cookies.get("spotify_access_token");
    }
+   
+    $scope.updateSetlistForArtist = function(){
+        console.log('calling updateSetlistForArtist');
+        if ($scope.setlists && $scope.setlists.length > 0) {
+                console.log('found setlsits for artist');
+            $scope.setlist = $scope.setlists[$scope.setlistIndex];
+            $scope.songs = $scope.setlist.songs;
+            
+            if ($scope.setlist.songs.length > 0){
+                findSongsOnSpotify();
+            }
+        }
+    }
     
-   $scope.searchSetlist = function(){
+   $scope.loadArtistSetlists = function(){
        setlistfm.getSetlist($scope.artist.setlistfmId,0)
         .success(function (setlists) {
             $scope.setlists = setlists;
-            $scope.setlist = setlists[$scope.setlistIndex];
-            
-            if ($scope.setlistIndex == 0)
-                findSongsOnSpotify();
-            else
-                $scope.setlistIndex = 0;
+            $scope.setlist = setlists[0];
+            $scope.setlistIndex = 0;  
        });
     }
+    
+    $scope.$watch('setlistIndex', function () {
+        console.log('setlistIndex $watch fired');
+        $scope.updateSetlistForArtist();
+    });
+    
 
    $scope.searchArtist = function(){
        if ($scope.artistInput == $scope.lastSearch)

@@ -24,16 +24,13 @@ block content
           span(ng-disabled="artists.length < 2 || artistIndex === 0" ng-click="(artists.length < 2) || artistIndex === 0 || (artistIndex = artistIndex - 1)" class="btn glyphicon glyphicon-chevron-left")
           h3 {{ artist.name }} 
           span(ng-disabled="artistIndex === artists.length - 1" ng-click="artistIndex == artists.length - 1 || (artistIndex = artistIndex + 1)" class="btn glyphicon glyphicon-chevron-right")
-          
-      div(class="row top15 text-center" ng-show="false")
-        button(ng-click="searchSetlist()" ng-disabled="artist == null" class="btn btn-primary") Find setlists
-
+       
       div(class="row top17" ng-show="setlists" ng-if="artist != null") 
         div(class="col-xs-6 col-xs-offset-3")
             div(ng-show="setlists.length > 0")
-                span(ng-disabled="setlists.length < 2 || setlistIndex == 0" ng-click="setlistIndex = setlistIndex - 1;" class="btn glyphicon glyphicon-chevron-left")
-                h3  {{ setlists[setlistIndex].where }}
-                span(ng-disabled="setlistIndex == setlists.length - 1" ng-click="setlistIndex = setlistIndex + 1;" class="btn glyphicon glyphicon-chevron-right")
+                span(ng-disabled="setlists.length < 2 || setlistIndex === 0" ng-click="(setlistIndex = setlistIndex - 1)" class="btn glyphicon glyphicon-chevron-left")
+                h3  {{ setlists[setlistIndex].where }} {{ setlistIndex }}
+                span(ng-disabled="setlistIndex === setlists.length - 1" ng-click="(setlistIndex = setlistIndex +  1)" class="btn glyphicon glyphicon-chevron-right")
             div(ng-show="setlists.length <= 0" class="text-center") No sets found
         
       div(class="row top15 text-center")
