@@ -25,6 +25,10 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     }
     
     function findSongsOnSpotify() {
+        if ($scope.setlist.songs.length <= 0){
+            return;
+        }
+        
         var song = $scope.setlist.songs[0];
         findSongOnSpotify(song);
     }
@@ -43,6 +47,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     
     $scope.$watch('artistIndex', function(){
         if ($scope.artists && $scope.artists.length > 0) {
+            console.log('searching setlist');
             $scope.artist = $scope.artists[$scope.artistIndex]; 
             $scope.searchSetlist();
         }
@@ -53,10 +58,13 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
             $scope.setlist = $scope.setlists[$scope.setlistIndex];
             $scope.songs = $scope.setlist.songs;
             
-            if ($scope.setlist.songs.length > 0)
+            if ($scope.setlist.songs.length > 0){
+                console.log('calling findsongs from setlistIndex');
                 findSongsOnSpotify();
+            }
         }
     });
+    
     
    function addSongToSpotifyList(song){
         var indexOfSong = $scope.songs.indexOf(song);
@@ -93,6 +101,8 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
        setlistfm.getSetlist($scope.artist.setlistfmId,0)
         .success(function (setlists) {
             $scope.setlists = setlists;
+            $scope.setlist = setlists[$scope.setlistIndex];
+            
             if ($scope.setlistIndex == 0)
                 findSongsOnSpotify();
             else
@@ -101,6 +111,11 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     }
 
    $scope.searchArtist = function(){
+       if ($scope.artistInput == $scope.lastSearch)
+        return;
+       
+       $scope.lastSearch = $scope.artistInput;
+    
     setlistfm.getArtists($scope.artistInput).success(function (artists) {
         $scope.artistIndex = 0;
         $scope.artists = artists;
