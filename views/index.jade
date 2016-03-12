@@ -4,40 +4,40 @@ block content
   a(href='/')
     h1(class="text-center") Setlister
   
-  div(class="row top15")
+  div(class="mdl-grid top15")
     div(class="center-block" ng-style="{'width': '30vw'}")
         a( href="/login" ng-show="!playlists")
             img(  class="text-center" src="/images/log_in-mobile.svg")
             
   div(ng-show="playlists")
-      div(class="row top17")
-        div(class="col-xs-4 col-xs-offset-4")
-          select(class="form-control" ng-model="selectedList" ng-options="playlist as playlist.name for playlist in playlists")
+      div(class="mdl-grid top17")
+        div(class="mdl-cell mdl-cell--4mdl-cell mdl-cell--4mdl-cell-offset")
+          select(ng-model="selectedList" ng-options="playlist as playlist.name for playlist in playlists")
             option(value="") Choose a Spotify playlist
   
-      form(class="row top15 text-center" ng-submit="searchArtist()"  )
-        div(class="col-xs-4 col-xs-offset-4")
-          input(class="form-control text-center" ng-blur="searchArtist()" ng-model="artistInput" placeholder="Name of the band")
+      form(class="mdl-grid top15 text-center" ng-submit="searchArtist()"  )
+        div(class="mdl-cell--4mdl-cell mdl-cell--4mdl-cell-offset")
+          input(class="mdl-textfield__input text-center" ng-blur="searchArtist()" ng-model="artistInput" placeholder="Name of the band")
      
-      div(class="row top17" ng-show="artists") 
-        div(class="col-xs-6 col-xs-offset-3")
+      div(class="mdl-grid top17" ng-show="artists") 
+        div(class="mdl-cell--6mdl-cell mdl-cell--3mdl-cell-offset")
           span(ng-disabled="artists.length < 2 || artistIndex === 0" ng-click="(artists.length < 2) || artistIndex === 0 || (artistIndex = artistIndex - 1)" class="btn glyphicon glyphicon-chevron-left")
           h3 {{ artist.name }} 
           span(ng-disabled="artistIndex === artists.length - 1" ng-click="artistIndex === artists.length - 1 || (artistIndex = artistIndex + 1)" class="btn glyphicon glyphicon-chevron-right")
        
-      div(class="row top17" ng-show="setlists && artist != null") 
-        div(class="col-xs-6 col-xs-offset-3")
+      div(class="mdl-grid top17" ng-show="setlists && artist != null") 
+        div(class="mdl-cell--6mdl-cell mdl-cell--3mdl-cell-offset")
             div(ng-show="setlists.length > 0")
                 span(ng-disabled="setlists.length < 2 || setlistIndex == 0" ng-click="setlists.length < 2 || setlistIndex == 0 || (setlistIndex = setlistIndex - 1)" class="btn glyphicon glyphicon-chevron-left")
                 h3  {{ setlists[setlistIndex].where }} 
                 span(ng-disabled="setlistIndex == setlists.length - 1" ng-click="setlistIndex == setlists.length - 1 ||  (setlistIndex =setlistIndex +  1)" class="btn glyphicon glyphicon-chevron-right")
             div(ng-show="setlists.length <= 0" class="text-center") No sets found
         
-      div(class="row top15 text-center")
+      div(class="mdl-grid top15 text-center")
         div(class="btn btn-primary" ng-disabled="!selectedList || !songs || !readyToAddSongs" ng-click="addSongsToList()") Add songs to playlist: {{ selectedList.name }}
 
-      div(class="row top15 bot15 top-border bot-border")
-        table(class="table")
+      div(class="mdl-grid top15 bot15 top-border bot-border")
+        table(class="mdl-data-table ")
           thead
             tr
               th Setlist.fm name
@@ -48,8 +48,8 @@ block content
                 div {{ song.name }}
               td(ng-class="{ 'text-success': song.spotifyData }") {{  (song.spotifyData ? '&#10003;' : '')  }} {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name }}  
   
-      div(class="row top5")
-        div(class="col-xs-12")
+      div(class="mdl-grid top5")
+        div(class="mdl-cell--1mdl-cell2")
           div(class="btn btn-primary pull-right" ng-disabled="!selectedList || !songs || !readyToAddSongs" ng-click="addSongsToList()") Add songs to playlist: {{ selectedList.name }}
 
     
