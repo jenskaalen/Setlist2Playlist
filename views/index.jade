@@ -8,7 +8,7 @@ block content
     div(class="center-block" ng-style="{'width': '30vw'}")
         a( href="/login" ng-show="!playlists")
             img(  class="text-center" src="/images/log_in-mobile.svg")
- 
+            
   div(ng-show="playlists")
       div(class="row top17")
         div(class="col-xs-4 col-xs-offset-4")
@@ -23,14 +23,14 @@ block content
         div(class="col-xs-6 col-xs-offset-3")
           span(ng-disabled="artists.length < 2 || artistIndex === 0" ng-click="(artists.length < 2) || artistIndex === 0 || (artistIndex = artistIndex - 1)" class="btn glyphicon glyphicon-chevron-left")
           h3 {{ artist.name }} 
-          span(ng-disabled="artistIndex === artists.length - 1" ng-click="artistIndex == artists.length - 1 || (artistIndex = artistIndex + 1)" class="btn glyphicon glyphicon-chevron-right")
+          span(ng-disabled="artistIndex === artists.length - 1" ng-click="artistIndex === artists.length - 1 || (artistIndex = artistIndex + 1)" class="btn glyphicon glyphicon-chevron-right")
        
-      div(class="row top17" ng-show="setlists" ng-if="artist != null") 
+      div(class="row top17" ng-show="setlists && artist != null") 
         div(class="col-xs-6 col-xs-offset-3")
             div(ng-show="setlists.length > 0")
-                span(ng-disabled="setlists.length < 2 || setlistIndex === 0" ng-click="(setlistIndex = setlistIndex - 1)" class="btn glyphicon glyphicon-chevron-left")
-                h3  {{ setlists[setlistIndex].where }} {{ setlistIndex }}
-                span(ng-disabled="setlistIndex === setlists.length - 1" ng-click="(setlistIndex = setlistIndex +  1)" class="btn glyphicon glyphicon-chevron-right")
+                span(ng-disabled="setlists.length < 2 || setlistIndex == 0" ng-click="setlists.length < 2 || setlistIndex == 0 || (setlistIndex = setlistIndex - 1)" class="btn glyphicon glyphicon-chevron-left")
+                h3  {{ setlists[setlistIndex].where }} 
+                span(ng-disabled="setlistIndex == setlists.length - 1" ng-click="setlistIndex == setlists.length - 1 ||  (setlistIndex =setlistIndex +  1)" class="btn glyphicon glyphicon-chevron-right")
             div(ng-show="setlists.length <= 0" class="text-center") No sets found
         
       div(class="row top15 text-center")
@@ -44,8 +44,9 @@ block content
               th Spotify name
           tbody
             tr(ng-repeat="song in setlists[setlistIndex].songs" ng-class="{ 'text-warning': !song.spotifyData , 'text-success': song.addedToList }") 
-              td(ng-class="{ 'strikethrough': !song.spotifyData }") {{ song.name }}
-              td {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name }}
+              td(ng-class="{ 'strikethrough': !song.spotifyData }")
+                div {{ song.name }}
+              td(ng-class="{ 'text-success': song.spotifyData }") {{  (song.spotifyData ? '&#10003;' : '')  }} {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name }}  
   
       div(class="row top5")
         div(class="col-xs-12")

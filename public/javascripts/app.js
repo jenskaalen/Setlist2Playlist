@@ -4,13 +4,18 @@ var app = angular.module('setlister');
  
 
 app.controller('mainController', function($scope, $cookies, $http, spotify, setlistfm){
-    $scope.artistInput = "heaven shall burn";
+    $scope.artistInput = "nightwish";
     $scope.foundSongs = [];
     $scope.artists = [];
     $scope.setlists = [];
     $scope.readyToAddSongs = true;
     $scope.artist = null;
     $scope.setlistIndex = 0;
+    $scope.textText = "";
+    
+    $scope.$watch('testIndex', function(){
+       $scope.textText += "e"; 
+    });
     
     function findSongOnSpotify(song) {
         var indexOfSong = $scope.setlist.songs.indexOf(song);
@@ -86,9 +91,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
    }
    
     $scope.updateSetlistForArtist = function(){
-        console.log('calling updateSetlistForArtist');
         if ($scope.setlists && $scope.setlists.length > 0) {
-                console.log('found setlsits for artist');
             $scope.setlist = $scope.setlists[$scope.setlistIndex];
             $scope.songs = $scope.setlist.songs;
             
@@ -103,7 +106,13 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
         .success(function (setlists) {
             $scope.setlists = setlists;
             $scope.setlist = setlists[0];
-            $scope.setlistIndex = 0;  
+            
+            if ($scope.setlistIndex == 0){
+                $scope.updateSetlistForArtist();  
+            }
+            
+                //updateSetlistForArtist();  
+            $scope.setlistIndex = 0;
        });
     }
     
