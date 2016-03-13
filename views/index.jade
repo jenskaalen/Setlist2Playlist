@@ -3,28 +3,38 @@ extends layout
 block content
   a(href='/')
     h1(class="text-center") Setlister
+        i(class="material-icons") face
   
   div(class="mdl-grid top15")
-    div(class="center-block" ng-style="{'width': '30vw'}")
+    div(class="" ng-style="{'width': '30vw'}")
         a( href="/login" ng-show="!playlists")
             img(  class="text-center" src="/images/log_in-mobile.svg")
             
   div(ng-show="playlists")
       div(class="mdl-grid top17")
+        div(class="mdl-layout-spacer")
         div(class="mdl-cell mdl-cell--4mdl-cell mdl-cell--4mdl-cell-offset")
           select(ng-model="selectedList" ng-options="playlist as playlist.name for playlist in playlists")
-            option(value="") Choose a Spotify playlist
+            option(value="") Choose a Spotify playlist 
+        div(class="mdl-layout-spacer")
   
-      form(class="mdl-grid top15 text-center" ng-submit="searchArtist()"  )
-        div(class="mdl-cell--4mdl-cell mdl-cell--4mdl-cell-offset")
+      form(class="mdl-grid top15 " ng-submit="searchArtist()"  )
+        div(class="mdl-layout-spacer")
+        div(class="mdl-cell--4mdl-cell mdl-cell--4mdl-cell-offset text-center" )
           input(class="mdl-textfield__input text-center" ng-blur="searchArtist()" ng-model="artistInput" placeholder="Name of the band")
+        div(class="mdl-layout-spacer")
      
-      div(class="mdl-grid top17" ng-show="artists") 
-        div(class="mdl-cell--6mdl-cell mdl-cell--3mdl-cell-offset")
-          span(ng-disabled="artists.length < 2 || artistIndex === 0" ng-click="(artists.length < 2) || artistIndex === 0 || (artistIndex = artistIndex - 1)" class="btn glyphicon glyphicon-chevron-left")
+      div(class="mdl-grid top17" ng-show="artists")
+        div(class="mdl-layout-spacer")
+        div(class="mdl-cell--6mdl-cell mdl-cell--8mdl-cell-offset")
+          //span(ng-disabled="artists.length < 2 || artistIndex === 0" ng-click="(artists.length < 2) || artistIndex === 0 || (artistIndex = artistIndex - 1)")
+          span(class="" ng-disabled="artists.length < 2 || artistIndex === 0" ng-click="(artists.length < 2) || artistIndex === 0 || (artistIndex = artistIndex - 1)" class="btn") 
+            i(class="material-icons md-36") chevron_left
           h3 {{ artist.name }} 
-          span(ng-disabled="artistIndex === artists.length - 1" ng-click="artistIndex === artists.length - 1 || (artistIndex = artistIndex + 1)" class="btn glyphicon glyphicon-chevron-right")
-       
+          span(ng-disabled="artistIndex === artists.length - 1" ng-click="artistIndex === artists.length - 1 || (artistIndex = artistIndex + 1)" class="btn")
+            i(ng-class="{ 'md-inactive': artistIndex === artists.length - 1 }" class="material-icons md-36") chevron_right
+        div(class="mdl-layout-spacer")
+        
       div(class="mdl-grid top17" ng-show="setlists && artist != null") 
         div(class="mdl-cell--6mdl-cell mdl-cell--3mdl-cell-offset")
             div(ng-show="setlists.length > 0")

@@ -3,8 +3,14 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+.btn {
+    cursor: pointer;
+    /*margin: 5px*/
+    padding: 0, 10px, 0, 10px;
+}
+
+.text-center {
+    text-align: center !important;
 }
 
 .top5 { margin-top:5px; }
@@ -92,22 +98,4 @@ select:focus {
   border-right: .25em solid transparent;
   border-top: 0.375em solid rgba(0,0,0, 0.12);
   pointer-events: none;
-}
-
-/* ==========  Demo CSS ========== */
-body {
-  padding: 20px;
-  background: #fafafa;
-  font-family: 'Roboto','Helvetica','Arial',sans-serif;
-}
-
-.demo {
-  width: 200px;
-  padding: 20px;
-  margin: 0 auto;
-  top: 50%;
-  margin-top: -2em;
-  position: absolute;
-  right: 0;
-  left: 0;
 }
