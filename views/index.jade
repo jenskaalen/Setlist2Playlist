@@ -1,14 +1,16 @@
 extends layout
 
 block content
-  a(href='/')
-    h1(class="text-center") Setlister
-        i(class="material-icons") face
+  div
+    a(href='/')
+        h1(class="display-4 text-center") Setlister
   
   div(class="mdl-grid top15")
+    div(class="mdl-layout-spacer")
     div(class="" ng-style="{'width': '30vw'}")
         a( href="/login" ng-show="!playlists")
             img(  class="text-center" src="/images/log_in-mobile.svg")
+    div(class="mdl-layout-spacer")
             
   div(ng-show="playlists")
       div(class="mdl-grid top17")
@@ -36,28 +38,29 @@ block content
         div(class="mdl-layout-spacer")
         
       div(class="mdl-grid top17" ng-show="setlists && artist != null") 
+        div(class="mdl-layout-spacer")
         div(class="mdl-cell--6mdl-cell mdl-cell--3mdl-cell-offset")
             div(ng-show="setlists.length > 0")
                 span(ng-disabled="setlists.length < 2 || setlistIndex == 0" ng-click="setlists.length < 2 || setlistIndex == 0 || (setlistIndex = setlistIndex - 1)" class="btn glyphicon glyphicon-chevron-left")
                 h3  {{ setlists[setlistIndex].where }} 
                 span(ng-disabled="setlistIndex == setlists.length - 1" ng-click="setlistIndex == setlists.length - 1 ||  (setlistIndex =setlistIndex +  1)" class="btn glyphicon glyphicon-chevron-right")
             div(ng-show="setlists.length <= 0" class="text-center") No sets found
+        div(class="mdl-layout-spacer")
         
       div(class="mdl-grid top15 text-center")
         div(class="btn btn-primary" ng-disabled="!selectedList || !songs || !readyToAddSongs" ng-click="addSongsToList()") Add songs to playlist: {{ selectedList.name }}
 
-      div(class="mdl-grid top15 bot15 top-border bot-border")
-        table(class="mdl-data-table ")
-          thead
-            tr
-              th Setlist.fm name
-              th Spotify name
-          tbody
-            tr(ng-repeat="song in setlists[setlistIndex].songs" ng-class="{ 'text-warning': !song.spotifyData , 'text-success': song.addedToList }") 
-              td(ng-class="{ 'strikethrough': !song.spotifyData }")
-                div {{ song.name }}
-              td(ng-class="{ 'text-success': song.spotifyData }") {{  (song.spotifyData ? '&#10003;' : '')  }} {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name }}  
-  
+      table(class="mdl-data-table mdl-js-data-table mdl-shadow--2dp fullwidth")
+        thead
+          tr
+            th(class="mdl-data-table__cell--non-numeric fullwidth") Setlist.fm name
+            th(class="mdl-data-table__cell--non-numeric fullwidth") Spotify name
+        tbody
+          tr(ng-repeat="song in setlists[setlistIndex].songs" ng-class="{ 'text-warning': !song.spotifyData , 'text-success': song.addedToList }" ) 
+            td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'strikethrough': !song.spotifyData }")
+              div {{ song.name }}
+            td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'text-success': song.spotifyData }") {{  (song.spotifyData ? '&#10003;' : '')  }} {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name }}  
+
       div(class="mdl-grid top5")
         div(class="mdl-cell--1mdl-cell2")
           div(class="btn btn-primary pull-right" ng-disabled="!selectedList || !songs || !readyToAddSongs" ng-click="addSongsToList()") Add songs to playlist: {{ selectedList.name }}
