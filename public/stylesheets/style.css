@@ -1,20 +1,29 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
 .btn {
     cursor: pointer;
     /*margin: 5px*/
-    padding: 0, 10px, 0, 10px;
+    padding: 0, 0, 0, 0;
 }
+
+.btn-styleless { 
+  cursor: pointer;
+}
+
 
 .text-center {
     text-align: center !important;
 }
 
+.selector-title {
+    width: 450px;
+    text-align: center;
+}
+
 .fullwidth {
     width: 100%;
+}
+
+.setlister-select option{
+    text-align: center;
 }
 
 .top5 { margin-top:5px; }
@@ -31,6 +40,14 @@ body {
 .bot17 { margin-top:17px; }
 .bot30 { margin-top:30px; }
 
+
+.demo-layout-transparent .mdl-layout__header,
+.demo-layout-transparent .mdl-layout__drawer-button {
+  /* This background is dark, so we set text to white. Use 87% black instead if
+     your background is light. */
+  color: white;
+  background-color: #23CF5F ;
+}
 .strikethrough {
     text-decoration: line-through;
 }
@@ -43,14 +60,18 @@ body {
     border-bottom: 1px solid black;
 }
 
+.md-36{
+  font-size: 36px !important;
+}
 
+.md-48{
+  font-size: 48px !important;
+}
+
+/*
 h3, span {display:block;float:left;text-align:center;}
 h3 {width:80%;margin-top:10px;}
-span {width:10%;margin-top:15px;}
-
-.btn-styleless { 
-  cursor: pointer;
-}
+span {width:10%;margin-top:15px;}*/
 
 /* SELECT CODE SINCE MATERIAL DESIGN LITE HASNT IMPLEMENTED SELECTS*/
 

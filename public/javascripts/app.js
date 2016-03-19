@@ -23,8 +23,10 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
         spotify.searchTrack($scope.artist.name + " " + song.name).then(function (spotifySong) {
             song.spotifyData = spotifySong;
             
-            if (indexOfSong === ($scope.songs.length - 1))
+            if (indexOfSong === ($scope.songs.length - 1)) {
+                $scope.readyToAddSongs = true;
                 return;
+            }
             
             findSongOnSpotify($scope.setlist.songs[indexOfSong + 1]);
         });
@@ -69,7 +71,6 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
             song.addedToList = true;
 
             if (indexOfSong === ($scope.songs.length - 1)) {
-                $scope.readyToAddSongs = true;
                 return;
             }
 
@@ -133,7 +134,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
         $scope.artists = artists;
         $scope.artist = artists[0];
         $scope.artistId = $scope.artist.setlistfmId;
-            
+        $scope.loadArtistSetlists();
     });  
     }
    
