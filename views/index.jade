@@ -25,21 +25,21 @@ block content
      
       div(class="mdl-grid top17" ng-show="artists && artists.length > 0")
         div(class="mdl-layout-spacer")
-        div( class="btn" ng-disabled="artists.length < 2 || artistIndex === 0" ng-click="(artists.length < 2) || artistIndex === 0 || (artistIndex = artistIndex - 1)") 
-            i(class="material-icons md-36") chevron_left
-        div(class="selector-title mdl-typography--title"){{ artist.name }} 
-        div( class="btn" ng-disabled="artistIndex === artists.length - 1" ng-click="artistIndex === artists.length - 1 || (artistIndex = artistIndex + 1)")
-            i(ng-class="{ 'md-inactive': artistIndex === artists.length - 1 }" class="material-icons md-36") chevron_right
+        div( class="btn" ng-click="(artists.length < 2) || artistIndex === 0 || (artistIndex = artistIndex - 1)") 
+            i(ng-class="{ 'md-dark md-inactive': artists.length < 2 || artistIndex === 0 }" class="material-icons md-36") chevron_left
+        div(class="selector-title mdl-typography--title"){{ artist.name }} {{ artistIndex === artists.length - 1 }} {{ artistIndex }} {{ artists.length }}
+        div( class="btn" ng-click="artistIndex === artists.length - 1 || (artistIndex = artistIndex + 1)")
+            i(ng-class="{ 'md-dark md-inactive': artistIndex === artists.length - 1 }" class="material-icons md-36") chevron_right
         div(class="mdl-layout-spacer")
 
         
-      div(class="mdl-grid top17" ng-show="setlists.length > 0 && artist != null") 
+      div(class="mdl-grid top17") 
         div(class="mdl-layout-spacer")
-        div(ng-disabled="setlists.length < 2 || setlistIndex == 0" ng-click="setlists.length < 2 || setlistIndex == 0 || (setlistIndex = setlistIndex - 1)" class="btn")
-            i(class="material-icons md-36") chevron_left
-        div(class="selector-title mdl-typography--title") {{ setlists[setlistIndex].where }} 
+        div( ng-click="setlists.length < 2 || setlistIndex == 0 || (setlistIndex = setlistIndex - 1)" class="btn")
+            i(ng-class="{ 'md-dark md-inactive': setlists.length < 2 || setlistIndex == 0 }" class="material-icons md-36") chevron_left
+        div(class="selector-title mdl-typography--title") {{ (setlists.length > 0 && artist != null) ? setlists[setlistIndex].where :  '-Location-'   }} 
         div(ng-disabled="setlistIndex == setlists.length - 1" ng-click="setlistIndex == setlists.length - 1 ||  (setlistIndex =setlistIndex +  1)" class="btn")
-            i(class="material-icons md-36") chevron_right
+            i(ng-class="{ 'md-dark md-inactive': setlistIndex == setlists.length - 1 }" class="material-icons md-36") chevron_right
         div(class="mdl-layout-spacer")
       div(class="mdl-grid top17" ng-show="setlists.length <= 0 && artist != null") 
         div(class="mdl-layout-spacer")
