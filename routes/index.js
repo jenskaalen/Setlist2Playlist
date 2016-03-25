@@ -3,9 +3,11 @@ var router = express.Router();
 var request = require('request'); // "Request" library
 var cookieParser = require('cookie-parser');
 
-var client_id = '16841a7e5a4440148404342c6f804e50'; // Your client id
-var client_secret = 'eca955deae774a06a0c0191595b2b28d'; // Your client secret
-var redirectTemplate = 'http://[host]/setlister'; // Your redirect uri
+var config = require('../config');
+
+var client_id = config.spotifyClientId; // Your client id
+var client_secret = config.spotifySecret; // Your client secret
+var redirectTemplate = 'http://[host]/setlister/'; // Your redirect uri
 var stateKey = 'spotify_auth_state';
 var cookieParser = require('cookie-parser');
 var querystring = require('querystring');
@@ -28,6 +30,11 @@ var generateRandomString = function(length) {
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index');
+});
+
+//about page
+router.get('/about', function(req, res, next) {
+  res.render('about');
 });
 
 router.get('/login', function(req, res) {
