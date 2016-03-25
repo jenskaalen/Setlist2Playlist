@@ -1,11 +1,12 @@
 doctype html
-html(ng-app="setlister")
+html(ng-app="setlister" lang="en")
   head
-    title= title
+    title Setlist2Playlist
+    meta(name="description" content="Simple webapp that allows you to add songs from an artists setlist to a Spotify playlist")
     link(rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css")
     link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
-    link(rel="stylesheet" href="https://code.getmdl.io/1.1.2/material.indigo-pink.min.css")
-    link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
+    //-link(rel="stylesheet" href="https://code.getmdl.io/1.1.2/material.indigo-pink.min.css")
+    link(rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.teal-pink.min.css") 
     link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js")
@@ -14,10 +15,14 @@ html(ng-app="setlister")
     script(defer src="https://code.getmdl.io/1.1.2/material.min.js")
     script(src="/javascripts/app.js")
   body(ng-controller="mainController")
-    div(class="demo-layout-transparent mdl-layout mdl-js-layout mdl-layout--fixed-header")
-        header(class="mdl-layout__header mdl-layout__header--transparent")
+    div(class="mdl-layout mdl-js-layout mdl-layout--fixed-header")
+        header(class="mdl-layout__header")
             div(class="mdl-layout__header-row")
-                span(class="mdl-layout-title") Setlist2Playlist
+              span(class="mdl-layout-title" itemprop="name") Setlist2Playlist  
+              div(class="mdl-layout-spacer")
+              nav(class="mdl-navigation mdl-layout--large-screen-only")
+                a( class="mdl-navigation__link" href="/") Home
+                a( class="mdl-navigation__link" href="/About") About
                 
     main(class="mdl-layout")
         div(class="page-content")

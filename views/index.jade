@@ -13,23 +13,23 @@ block content
         div(class="mdl-layout-spacer")
         div(class="text-center")
           select(ng-model="selectedList" class="text-center setlister-select" ng-options="playlist as playlist.name for playlist in playlists")
-            option(value="") Choose a Spotify playlist 
+            option(value="") Choose a public playlist 
         div(class="mdl-layout-spacer")
   
       form(class="mdl-grid top15 " ng-submit="searchArtist()"  )
         div(class="mdl-layout-spacer")
         div(class="mdl-textfield mdl-js-textfield" )
-          input(class="mdl-textfield__input text-center" name="artistNameInput" ng-blur="searchArtist()" ng-model="artistInput")
+          input(class="mdl-textfield__input text-center" name="artistNameInput" ng-blur="searchArtist()" ng-model="artistInput" placeholder="Search for artist...")
           label(class="mdl-textfield__label" for="artistNameInput") Artist name...
         div(class="mdl-layout-spacer")
      
-      div(class="mdl-grid top17" ng-show="artists && artists.length > 0")
+      div(class="mdl-grid top17")
         div(class="mdl-layout-spacer")
         div( class="btn" ng-click="(artists.length < 2) || artistIndex === 0 || (artistIndex = artistIndex - 1)") 
             i(ng-class="{ 'md-dark md-inactive': artists.length < 2 || artistIndex === 0 }" class="material-icons md-36") chevron_left
-        div(class="selector-title mdl-typography--title"){{ artist.name }} {{ artistIndex === artists.length - 1 }} {{ artistIndex }} {{ artists.length }}
-        div( class="btn" ng-click="artistIndex === artists.length - 1 || (artistIndex = artistIndex + 1)")
-            i(ng-class="{ 'md-dark md-inactive': artistIndex === artists.length - 1 }" class="material-icons md-36") chevron_right
+        div(class="selector-title mdl-typography--title" ng-class="{ 'text-cursive': artist == null }")  {{ (artist != null) ? artist.name :  'Artist'   }}
+        div( class="btn" ng-click="artistIndex >= artists.length - 1 || (artistIndex = artistIndex + 1)")
+            i(ng-class="{ 'md-dark md-inactive': artistIndex >= artists.length - 1 }" class="material-icons md-36") chevron_right
         div(class="mdl-layout-spacer")
 
         
@@ -37,13 +37,14 @@ block content
         div(class="mdl-layout-spacer")
         div( ng-click="setlists.length < 2 || setlistIndex == 0 || (setlistIndex = setlistIndex - 1)" class="btn")
             i(ng-class="{ 'md-dark md-inactive': setlists.length < 2 || setlistIndex == 0 }" class="material-icons md-36") chevron_left
-        div(class="selector-title mdl-typography--title") {{ (setlists.length > 0 && artist != null) ? setlists[setlistIndex].where :  '-Location-'   }} 
-        div(ng-disabled="setlistIndex == setlists.length - 1" ng-click="setlistIndex == setlists.length - 1 ||  (setlistIndex =setlistIndex +  1)" class="btn")
-            i(ng-class="{ 'md-dark md-inactive': setlistIndex == setlists.length - 1 }" class="material-icons md-36") chevron_right
+        div(class="selector-title mdl-typography--title" ng-class="{ 'text-cursive': !(setlists.length > 0) }") {{ (setlists.length > 0 && artist != null) ? setlists[setlistIndex].where :  'Location'   }} 
+        div(ng-disabled="setlistIndex >= setlists.length - 1" ng-click="setlistIndex >= setlists.length - 1 ||  (setlistIndex =setlistIndex +  1)" class="btn")
+            i(ng-class="{ 'md-dark md-inactive': setlistIndex >= setlists.length - 1 }" class="material-icons md-36") chevron_right
         div(class="mdl-layout-spacer")
-      div(class="mdl-grid top17" ng-show="setlists.length <= 0 && artist != null") 
+      
+      //- progress and search indicator
+      div(class="mdl-grid top17 activityIndicator" ) 
         div(class="mdl-layout-spacer")
-        div(class="selector-title mdl-typography--display-1") No sets found
         div(class="mdl-layout-spacer")
         
       div(class="mdl-grid top15")
@@ -59,7 +60,10 @@ block content
             th(class="mdl-data-table__cell--non-numeric") Setlist.fm name
             th(class="mdl-data-table__cell--non-numeric") Spotify name
         tbody
-          tr(ng-repeat="song in setlists[setlistIndex].songs" ng-class="{ 'text-warning': !song.spotifyData , 'strikethrough': song.addedToList }" ) 
-            td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'strikethrough': !song.spotifyData }")
+          tr(ng-repeat="song in setlists[setlistIndex].songs" ) 
+            td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'text-cursive': !song.spotifyData }")
               div {{ song.name }}
-            td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'text-success': song.spotifyData }") {{  (song.spotifyData ? '&#10003;' : '')  }} {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name   }}  
+            td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'text-cursive': !song.spotifyData }") 
+                div
+                  i(ng-show="song.addedToList" class="icon material-icons text-success align-vertical") done 
+                  span {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name   }}  

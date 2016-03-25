@@ -1,3 +1,7 @@
+body{
+    font-family: "Roboto", Arial, Helvetica, sans-serif;
+}
+
 .btn {
     cursor: pointer;
     /*margin: 5px*/
@@ -8,9 +12,25 @@
   cursor: pointer;
 }
 
+.align-vertical {
+    vertical-align:middle !important;
+}
+
+.activityIndicator{
+    height: 3em;
+}
+
+.text-success{
+    color: #78CA56
+}
 
 .text-center {
     text-align: center !important;
+}
+
+.text-cursive{
+    font-style: italic !important;
+    color: rgba(0, 0, 0, 0.4) !important;
 }
 
 .selector-title {
@@ -41,13 +61,6 @@
 .bot30 { margin-top:30px; }
 
 
-.demo-layout-transparent .mdl-layout__header,
-.demo-layout-transparent .mdl-layout__drawer-button {
-  /* This background is dark, so we set text to white. Use 87% black instead if
-     your background is light. */
-  color: white;
-  background-color: #23CF5F ;
-}
 .strikethrough {
     text-decoration: line-through;
 }

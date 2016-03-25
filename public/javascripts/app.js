@@ -4,14 +4,15 @@ var app = angular.module('setlister');
  
 
 app.controller('mainController', function($scope, $cookies, $http, spotify, setlistfm){
-    $scope.artistInput = "nightwish";
+    $scope.artistInput = null;
     $scope.foundSongs = [];
     $scope.artists = [];
     $scope.setlists = [];
     $scope.readyToAddSongs = true;
     $scope.artist = null;
     $scope.setlistIndex = 0;
-    $scope.textText = "";
+    $scope.artistIndex = 0;
+    $scope.searching = false;
     
     $scope.$watch('testIndex', function(){
        $scope.textText += "e"; 
@@ -103,6 +104,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     }
     
    $scope.loadArtistSetlists = function(){
+       $scope.searching = true;
        setlistfm.getSetlist($scope.artist.setlistfmId,0)
         .success(function (setlists) {
             $scope.setlists = setlists;
@@ -114,6 +116,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
             
                 //updateSetlistForArtist();  
             $scope.setlistIndex = 0;
+            $scope.searching = false;
        });
     }
     
