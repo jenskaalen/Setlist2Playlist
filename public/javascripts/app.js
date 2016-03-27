@@ -14,10 +14,6 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     $scope.artistIndex = 0;
     $scope.searching = false;
     
-    $scope.$watch('testIndex', function(){
-       $scope.textText += "e"; 
-    });
-    
     function findSongOnSpotify(song) {
         var indexOfSong = $scope.setlist.songs.indexOf(song);
         

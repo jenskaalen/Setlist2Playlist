@@ -1,14 +1,8 @@
 extends layout
 
 block content
-  div(class="mdl-grid top15")
-    div(class="mdl-layout-spacer")
-    div(class="" ng-style="{'width': '30vw'}")
-        a( href="/login" ng-show="!playlists")
-            img(  class="text-center" src="/images/log_in-mobile.svg")
-    div(class="mdl-layout-spacer")
             
-  div(ng-show="playlists")
+  div()
       div(class="mdl-grid top17")
         div(class="mdl-layout-spacer")
         div(class="text-center")
@@ -45,6 +39,14 @@ block content
       //- progress and search indicator
       div(class="mdl-grid top17 activityIndicator" ) 
         div(class="mdl-layout-spacer")
+        div(class="mdl-layout-spacer")
+        
+        
+    div(class="mdl-grid top15")
+        div(class="mdl-layout-spacer")
+        div(class="" ng-style="{'width': '30vw'}")
+            a( href="/login?artist={{artistInput}}" ng-show="!playlists")
+                img(  class="text-center" src="/images/log_in-mobile.svg")
         div(class="mdl-layout-spacer")
         
       div(class="mdl-grid top15")

@@ -13,6 +13,12 @@ var cookieParser = require('cookie-parser');
 var querystring = require('querystring');
 var xml2js = require('xml2js');
 
+var mongo = require('mongoskin');
+var Db = mongo.Db;
+var MongoClient = mongo.MongoClient;
+var db = MongoClient.connect('mongodb://localhost:27017/setlist2playlist');
+var searchesColl = db.collection('setlistSearches');
+
 //we store dis
 var access_token;
 
@@ -43,7 +49,7 @@ router.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
     var redirectUri = redirectTemplate.replace("[host]", req.get('host'));
-
+    
   // your application requests authorization
   var scope = 'user-read-private user-read-email user-follow-read playlist-modify playlist-modify-public playlist-modify-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
@@ -57,21 +63,20 @@ router.get('/login', function(req, res) {
 });
 
 
-router.get('/playLists', function(req, res){
-    console.log('trying to get cookies from these playlists: ' + req.cookies);
+// router.get('/playLists', function(req, res){
     
-    var access_token = req.cookies["spotify_access_token"];
+//     var access_token = req.cookies["spotify_access_token"];
     
-    var options = {
-        url: 'https://api.spotify.com/v1/me/following?type=artist',
-        headers: { 'Authorization': 'Bearer ' + access_token },
-        json: true
-    };
+//     var options = {
+//         url: 'https://api.spotify.com/v1/me/following?type=artist',
+//         headers: { 'Authorization': 'Bearer ' + access_token },
+//         json: true
+//     };
     
-    request.get(options, function(error, response, body) {
-          res.send(body);
-        });
-});
+//     request.get(options, function(error, response, body) {
+//           res.send(body);
+//         });
+// });
 
 router.get('/setlister', function(req, res) {
   var code = req.query.code || null;
@@ -220,7 +225,7 @@ router.get('/getSpotifySong', function(req, res){
 
 router.get('/searchSetlistfmArtist', function (req, res) {
     var bandName = req.query.artist;
-    // bandName = encodeURIComponent(bandName);
+    searchesColl.insert( { artistName: decodeURI(bandName), when: Date() });
 
     var bandUriTemplate = "http://api.setlist.fm/rest/0.1/search/artists.xml?artistName=[band]";
     var bandQuery = bandUriTemplate.replace("[band]", bandName);
