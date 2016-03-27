@@ -1,6 +1,7 @@
 #Setlist2Playlist 
 
 Simple webapp that allows you to add songs from an artists setlist to a Spotify playlist.  
+http://setlist2playlist.me
 
 ## How to set up 
 Besides the usual npm install, you need a config.js in the root folder of the project. 
