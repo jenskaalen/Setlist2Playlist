@@ -2,14 +2,7 @@ extends layout
 
 block content
             
-  div()
-      div(class="mdl-grid top17")
-        div(class="mdl-layout-spacer")
-        div(class="text-center")
-          select(ng-model="selectedList" class="text-center setlister-select" ng-options="playlist as playlist.name for playlist in playlists")
-            option(value="") Choose a public playlist 
-        div(class="mdl-layout-spacer")
-  
+  div
       form(class="mdl-grid top15 " ng-submit="searchArtist()"  )
         div(class="mdl-layout-spacer")
         div(class="mdl-textfield mdl-js-textfield" )
@@ -41,20 +34,30 @@ block content
         div(class="mdl-layout-spacer")
         div(class="mdl-layout-spacer")
         
-        
-    div(class="mdl-grid top15")
+    div(class="mdl-grid top15"  ng-show="!spotifyAuthed")
         div(class="mdl-layout-spacer")
-        div(class="" ng-style="{'width': '30vw'}")
+        div(class="" ng-style="{'width': '30vw', 'max-width': '250px'}")
             a( href="/login?artist={{artistInput}}" ng-show="!playlists")
                 img(  class="text-center" src="/images/log_in-mobile.svg")
+            br
+            div(class="top15") You must sign in to Spotify to be able to add songs to your own playlist.
         div(class="mdl-layout-spacer")
+        
+        //- must be logged in
+      div(class="mdl-grid top17" ng-show="spotifyAuthed")
+        div(class="mdl-layout-spacer")
+        div(class="text-center")
+          select(ng-model="selectedList" class="text-center setlister-select" ng-options="playlist as playlist.name for playlist in playlists")
+            option(value="") Choose a public playlist 
+        div(class="mdl-layout-spacer")
+        
         
       div(class="mdl-grid top15")
         div(class="mdl-layout-spacer")
         div(ng-disabled="!selectedList || !songs || !readyToAddSongs" ng-click="!selectedList || !songs || !readyToAddSongs || addSongsToList()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" id="addToPlaylistBtn") 
             i(class="icon material-icons") playlist_add
-        div(class="mdl-tooltip mdl-tooltip--large" for="addToPlaylistBtn") Add to {{ selectedList.name }}
-        
+        div(ng-if="spotifyAuthed" class="mdl-tooltip mdl-tooltip--large" for="addToPlaylistBtn") Add to {{ selectedList.name }}
+        div(ng-if="!spotifyAuthed" class="mdl-tooltip mdl-tooltip--large" for="addToPlaylistBtn") Sign in to Spotify to choose a playlist
         
       table(class="mdl-data-table mdl-js-data-table mdl-shadow--2dp fullwidth")
         thead
@@ -63,9 +66,11 @@ block content
             th(class="mdl-data-table__cell--non-numeric") Spotify name
         tbody
           tr(ng-repeat="song in setlists[setlistIndex].songs" ) 
-            td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'text-cursive': !song.spotifyData }")
+            td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'text-cursive': !song.spotifyData && spotifyAuthed }")
               div {{ song.name }}
             td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'text-cursive': !song.spotifyData }") 
-                div
+                div(ng-if="spotifyAuthed")
                   i(ng-show="song.addedToList" class="icon material-icons text-success align-vertical") done 
-                  span {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name   }}  
+                  span {{ !song.spotifyData ? "Song not found on Spotify" : song.spotifyData.name   }}
+                div(ng-if="!spotifyAuthed")
+                  span Log in to Spotify to see found songs

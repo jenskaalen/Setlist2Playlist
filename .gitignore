@@ -1,6 +1,8 @@
 .ntvs_analysis.dat
 config.js
 
+bower_components
+
 # Logs
 logs
 *.log

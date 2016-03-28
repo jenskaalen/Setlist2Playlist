@@ -19,8 +19,6 @@ var MongoClient = mongo.MongoClient;
 var db = MongoClient.connect('mongodb://localhost:27017/setlist2playlist');
 var searchesColl = db.collection('setlistSearches');
 
-//we store dis
-var access_token;
 
 var generateRandomString = function(length) {
   var text = '';
@@ -62,21 +60,40 @@ router.get('/login', function(req, res) {
     }));
 });
 
+router.get('/refreshToken', function(req, res){
+    var access_token = req.body.spotify_refresh_token;
+    var refresh_token = req.cookies.spotify_refresh_token;
+    
+    var authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      form: {
+        refresh_token: refresh_token,
+        grant_type: 'refresh_token'
+      },
+      headers: {
+        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+      },
+      json: true
+    };
+    
+    request.post(authOptions, function(error, response, body) {
+        console.log(body);
+      if (!error && response.statusCode === 200) {
 
-// router.get('/playLists', function(req, res){
-    
-//     var access_token = req.cookies["spotify_access_token"];
-    
-//     var options = {
-//         url: 'https://api.spotify.com/v1/me/following?type=artist',
-//         headers: { 'Authorization': 'Bearer ' + access_token },
-//         json: true
-//     };
-    
-//     request.get(options, function(error, response, body) {
-//           res.send(body);
-//         });
-// });
+        var access_token = body.access_token;
+        var expires_in = body.expires_in;
+        
+        var dateToExpire = new Date();
+        dateToExpire.setSeconds(dateToExpire.getSeconds() + expires_in); 
+            
+        res.cookie('spotify_access_token', access_token, { expires: dateToExpire });
+
+        res.status(200).send('token refreshed');
+      } else {
+          console.log(error);
+      }
+    });
+});
 
 router.get('/setlister', function(req, res) {
   var code = req.query.code || null;
@@ -109,21 +126,19 @@ router.get('/setlister', function(req, res) {
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
-        access_token = body.access_token,
-            refresh_token = body.refresh_token;
+        var access_token = body.access_token;
+        var refresh_token = body.refresh_token;
+        
+        var expires_in = body.expires_in;
+        
+        var dateToExpire = new Date();
+        dateToExpire.setSeconds(dateToExpire.getSeconds() + expires_in); 
+        var daysExpiration = 14;
+        var refreshTokenExpiration = new Date();
+        refreshTokenExpiration.setSeconds(refreshTokenExpiration.getSeconds() + (3600 * 24 * 5));
             
-        res.cookie('spotify_access_token', access_token);
-
-        var options = {
-          url: 'https://api.spotify.com/v1/me',
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
-
-        // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
-          console.log(body);
-        });
+        res.cookie('spotify_access_token', access_token, { expires: dateToExpire });
+        res.cookie('spotify_refresh_token', refresh_token, { expires: refreshTokenExpiration } );
 
         // we can also pass the token to the browser to make requests from there
         res.redirect('/');
@@ -145,6 +160,15 @@ router.get('/getArtist', function(req, res) {
     var bandQuery = bandUriTemplate.replace("[band]", bandName);
 
     request(bandQuery, function(error, response, body) {
+        if (response.statusCode === 401){
+            //TODO: refresh the token
+            
+            request(bandQuery, function(error, response, body) {
+                res.json(body);        
+            });
+            
+        }
+        
         res.json(body);
     });
 });
@@ -233,6 +257,9 @@ router.get('/searchSetlistfmArtist', function (req, res) {
     request(bandQuery, function (error, response, body) {
         xml2js.parseString(body, function (err, result) {
             var artists = [];
+            
+            if (!result || !result.artists || !result.artists.artist)
+                return artists;
 
             for (var i = 0; i < result.artists.artist.length; i++) {
                 var entry = result.artists.artist[i];
@@ -242,7 +269,22 @@ router.get('/searchSetlistfmArtist', function (req, res) {
                             };
                 artists.push(createdArtist);
             }
-
+            
+            var matchesPrecisely = null;
+            
+            for (var j = 0; j < artists.length; j++) {
+                var artist = artists[j];
+                
+                if (artist.name.toLowerCase() === bandName.toLowerCase()){
+                    matchesPrecisely = artist;
+                }
+            }
+            
+            if (matchesPrecisely != null){
+                artists.splice(artists.indexOf(matchesPrecisely), 1);
+                artists.splice(0, 0, matchesPrecisely);
+            }
+            
             res.send(artists);
         });
     });

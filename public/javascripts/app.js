@@ -13,6 +13,8 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     $scope.setlistIndex = 0;
     $scope.artistIndex = 0;
     $scope.searching = false;
+   $scope.spotifyAuthed = $cookies.get("spotify_access_token") && $cookies.get("spotify_access_token") != null? true : false;
+   $scope.enteredSongs = [];
     
     function findSongOnSpotify(song) {
         var indexOfSong = $scope.setlist.songs.indexOf(song);
@@ -37,22 +39,9 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
         var song = $scope.setlist.songs[0];
         findSongOnSpotify(song);
     }
-   
-    spotify.getPlaylists().success(function(playlists){
-       $scope.playlists = playlists.items; 
-    });
-    
-    spotify.getProfile().success(function(profile){
-       $scope.profile = profile;
-    });
 
-    $scope.$watchGroup(['playlist', 'songs'], function () {
-        //TODO: get playlist songs
-    });
-    
     $scope.$watch('artistIndex', function(){
         if ($scope.artists && $scope.artists.length > 0) {
-            console.log('searching setlist');
             $scope.artist = $scope.artists[$scope.artistIndex]; 
             $scope.loadArtistSetlists();
         }
@@ -81,11 +70,25 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
         addSongToSpotifyList(song);
     }
     
-   $scope.loggedIn = $cookies.get("spotify_access_token") != null;
-   $scope.enteredSongs = [];
+    function initSpotify(){
+        spotify.getPlaylists().success(function(playlists){
+        $scope.playlists = playlists.items; 
+        });
+        
+        spotify.getProfile().success(function(profile){
+        $scope.profile = profile;
+        });
+    }
    
-   if ($scope.loggedIn){
+   if ($scope.spotifyAuthed){
        $scope.authKey = $cookies.get("spotify_access_token");
+       initSpotify();
+   
+   } else if ($cookies.get("spotify_refresh_token") ? true : false){
+        spotify.refreshToken().then(function(){
+            $scope.spotifyAuthed = $cookies.get("spotify_access_token") ? true : false;
+            initSpotify();
+        });
    }
    
     $scope.updateSetlistForArtist = function(){
@@ -93,7 +96,7 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
             $scope.setlist = $scope.setlists[$scope.setlistIndex];
             $scope.songs = $scope.setlist.songs;
             
-            if ($scope.setlist.songs.length > 0){
+            if ($scope.setlist.songs.length > 0 && $scope.spotifyAuthed){
                 findSongsOnSpotify();
             }
         }
@@ -117,90 +120,73 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
     }
     
     $scope.$watch('setlistIndex', function () {
-        console.log('setlistIndex $watch fired');
         $scope.updateSetlistForArtist();
     });
     
-
    $scope.searchArtist = function(){
        if ($scope.artistInput == $scope.lastSearch)
         return;
        
        $scope.lastSearch = $scope.artistInput;
     
-    setlistfm.getArtists($scope.artistInput).success(function (artists) {
-        $scope.artistIndex = 0;
-        $scope.artists = artists;
-        $scope.artist = artists[0];
-        $scope.artistId = $scope.artist.setlistfmId;
-        $scope.loadArtistSetlists();
-    });  
+        setlistfm.getArtists($scope.artistInput).success(function (artists) {
+            $scope.artistIndex = 0;
+            $scope.artists = artists;
+            $scope.artist = artists[0];
+            $scope.artistId = $scope.artist.setlistfmId;
+            $scope.loadArtistSetlists();
+        });  
     }
-   
-   $scope.search = function(){
-        if (!$scope.enteredSongsInput){
-           return;
-       }
-       
-       $scope.foundSongs.length = 0;
-       
-      var lines = $scope.enteredSongsInput.split("\n");
-      
-      $scope.enteredSongs.length = 0;
-      
-      for(var i=0;i<lines.length;i++){
-          $scope.enteredSongs.push(lines[i]);
-          
-          var song = lines[i];
-          addSong(song, $scope.artistInput);
-      } 
-   }
 });
 
 app.factory('spotify', function($cookies, $http) {
-    var access_token = $cookies.get("spotify_access_token");
-    var req = { headers: { 'Authorization': 'Bearer ' + access_token } };
+    var headers = function() { 
+        return { headers: { 'Authorization': 'Bearer ' + $cookies.get("spotify_access_token") } };
+    }
 
     return {
+        refreshToken: function(){
+            return $http.get('/refreshToken');
+        },
         searchTrack: function(searchText) {
             searchText = encodeURIComponent(searchText);
 
             var searchUri = "https://api.spotify.com/v1/search?q=[query]&type=track&limit:1";
             searchUri = searchUri.replace("[query]", searchText);
-            var promise = $http.get(searchUri, req).then(function (result) {
+            var promise = $http.get(searchUri, headers()).then(function (result) {
                 return result.data.tracks.items[0];
             });
 
             return promise;
         },
+        //TODO: delete?
         findTrack: function (searchText) {
             searchText = encodeURIComponent(searchText);
             
             var searchUri = "https://api.spotify.com/v1/search?q=[query]&type=track&limit:1";
             searchUri = searchUri.replace("[query]", searchText);
-            $http.get(searchUri, req).then(function (data) {
+            $http.get(searchUri, headers()).then(function (data) {
                 
             });
         },
         getPlaylists: function() {
             var requestUrl = "https://api.spotify.com/v1/me/playlists";
 
-            return $http.get(requestUrl, req);
+            return $http.get(requestUrl, headers());
         },
         addSongToList: function(songUri, playlist, user) {
             var postUri = "https://api.spotify.com/v1/users/[user]/playlists/[playlist]/tracks?uris=" + songUri;
             postUri = postUri.replace("[playlist]", playlist);
             postUri = postUri.replace("[user]", user);
-            console.log(songUri);
 
             return $http({
                 method: "POST",
                 url: postUri,
-                headers: { 'Authorization': 'Bearer ' + access_token }
+                headers: headers()
             });
         },
         getProfile: function() {
-            return $http.get("https://api.spotify.com/v1/me", req);
+            return $http.get("https://api.spotify.com/v1/me", headers());
         }
     };
 });
