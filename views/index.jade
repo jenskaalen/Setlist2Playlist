@@ -65,7 +65,7 @@ block content
             th(class="mdl-data-table__cell--non-numeric") Setlist.fm name
             th(class="mdl-data-table__cell--non-numeric") Spotify name
         tbody
-          tr(ng-repeat="song in setlists[setlistIndex].songs" ) 
+          tr(ng-repeat="song in songs" ) 
             td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'text-cursive': !song.spotifyData && spotifyAuthed }")
               div {{ song.name }}
             td(class="mdl-data-table__cell--non-numeric" ng-class="{ 'text-cursive': !song.spotifyData }") 

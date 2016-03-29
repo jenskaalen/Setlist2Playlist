@@ -50,8 +50,9 @@ app.controller('mainController', function($scope, $cookies, $http, spotify, setl
    function addSongToSpotifyList(song){
         var indexOfSong = $scope.songs.indexOf(song);
         
-        if (!song.spotifyData)
+        if (!song.spotifyData || !song.spotifyData.uri) {
             addSongToSpotifyList($scope.songs[indexOfSong + 1]);
+        }
 
        spotify.addSongToList(song.spotifyData.uri, $scope.selectedList.id, $scope.profile.id).success(function() {
             song.addedToList = true;
@@ -182,7 +183,7 @@ app.factory('spotify', function($cookies, $http) {
             return $http({
                 method: "POST",
                 url: postUri,
-                headers: headers()
+                headers:  { 'Authorization': 'Bearer ' + $cookies.get("spotify_access_token") }
             });
         },
         getProfile: function() {
