@@ -24,14 +24,11 @@ block content
         div(class="mdl-layout-spacer")
         div( ng-click="setlists.length < 2 || setlistIndex == 0 || (setlistIndex = setlistIndex - 1)" class="btn")
             i(ng-class="{ 'md-dark md-inactive': setlists.length < 2 || setlistIndex == 0 }" class="material-icons md-36") chevron_left
-        div(class="selector-title mdl-typography--title" ng-class="{ 'text-cursive': !(setlists.length > 0) }") {{ (setlists.length > 0 && artist != null) ? setlists[setlistIndex].where :  'Location'   }} 
+        div(class="selector-title " ng-class="{ 'text-cursive': !(setlists.length > 0) }") 
+            div(class="mdl-typography--title") {{ (setlists.length > 0 && artist != null) ? setlists[setlistIndex].where :  'Location'   }}
+            div(ng-if="setlists.length > 0" class="text-cursive") {{ setlists[setlistIndex].when }} 
         div(ng-disabled="setlistIndex >= setlists.length - 1" ng-click="setlistIndex >= setlists.length - 1 ||  (setlistIndex =setlistIndex +  1)" class="btn")
             i(ng-class="{ 'md-dark md-inactive': setlistIndex >= setlists.length - 1 }" class="material-icons md-36") chevron_right
-        div(class="mdl-layout-spacer")
-      
-      //- progress and search indicator
-      div(class="mdl-grid top17 activityIndicator" ) 
-        div(class="mdl-layout-spacer")
         div(class="mdl-layout-spacer")
         
     div(class="mdl-grid top15"  ng-show="!spotifyAuthed")
@@ -43,6 +40,7 @@ block content
             div(class="top15") You must sign in to Spotify to be able to add songs to your own playlist.
         div(class="mdl-layout-spacer")
         
+        
         //- must be logged in
       div(class="mdl-grid top17" ng-show="spotifyAuthed")
         div(class="mdl-layout-spacer")
@@ -50,6 +48,7 @@ block content
           select(ng-model="selectedList" class="text-center setlister-select" ng-options="playlist as playlist.name for playlist in playlists")
             option(value="") Choose a public playlist 
         div(class="mdl-layout-spacer")
+        
         
         
       div(class="mdl-grid top15")

@@ -194,6 +194,9 @@ router.get('/getSetlist', function(req, res) {
                 var xmlSetlist = result.setlists.setlist[i];
                 console.log(xmlSetlist);
                 var setlist = {};
+                
+                if (xmlSetlist.$.eventDate != null)
+                    setlist.when = xmlSetlist.$.eventDate;
 
                 if (xmlSetlist.venue != null)
                     setlist.where = xmlSetlist.venue[0].$.name;
